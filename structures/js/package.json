@@ -6,6 +6,7 @@
   "license": "MIT",
   "scripts": {
     "build": "node --trace-warnings index.js",
+    "build:production": "NODE_ENV=production yarn build",
     "start": "nodemon",
     "serve": "serve public",
     "eslint:panadero": "npx install-peerdeps --dev eslint-config-panadero",

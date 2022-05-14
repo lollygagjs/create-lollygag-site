@@ -6,6 +6,7 @@
   "license": "MIT",
   "scripts": {
     "build": "NODE_OPTIONS=--trace-warnings ts-node --transpile-only index.ts",
+    "build:production": "NODE_ENV=production yarn build",
     "start": "nodemon",
     "serve": "serve public",
     "tsc": "tsc -d",
