@@ -211,9 +211,7 @@ function getUseTs(useTs, func) {
         const installCommand = yarnVersion ? "yarn" : "npm install";
         const install = (0, child_process_1.spawn)(`cd ${projectDir} && ${installCommand}`, {
             shell: true,
-        });
-        install.stdout.on("data", (data) => {
-            console.log(data.toString().trim());
+            stdio: "inherit",
         });
         install.on("exit", (exitCode) => {
             console.log();

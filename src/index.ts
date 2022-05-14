@@ -260,10 +260,7 @@ function getUseTs(useTs: string, func?: typeof getOption) {
 
   const install = spawn(`cd ${projectDir} && ${installCommand}`, {
     shell: true,
-  });
-
-  install.stdout.on("data", (data) => {
-    console.log(data.toString().trim());
+    stdio: "inherit",
   });
 
   install.on("exit", (exitCode) => {
