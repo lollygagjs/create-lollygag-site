@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@lollygag/core": "*",
+    "@lollygag/handlebars": "*",
     "@lollygag/livedev": "*",
     "@lollygag/markdown": "*",
     "@lollygag/templates": "*",
