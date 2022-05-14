@@ -45,15 +45,11 @@ function getProjectDir(dir: string, func?: typeof getOption) {
 
   // eslint-disable-next-line no-negated-condition
   if (!dir) {
-    result = `${wPrefix} Directory name cannot be blank`;
-  } else if (
-    !dir.match(/^[\w]([\w-]*[\w])*$/) ||
-    dir.indexOf("-_") !== -1 ||
-    dir.indexOf("_-") !== -1
-  ) {
+    result = `${wPrefix} Project directory is required`;
+  } else if (!dir.match(/^[\w.\-\/]*$/)) {
     result = `${wPrefix} Invalid directory name... '${dir}'`;
   } else if (existsSync(dir)) {
-    result = `${wPrefix} The directory '${dir}' exists`;
+    result = `${wPrefix} The directory '${dir}' already exists`;
   } else {
     result = dir;
   }
@@ -209,6 +205,8 @@ function getUseTs(useTs: string, func?: typeof getOption) {
     skips.push(opt.varToSet);
   }
 
+  const projectDir = join(vars.projectDir);
+
   const packageName = vars.siteName
     .toLowerCase()
     .trim()
@@ -229,7 +227,7 @@ function getUseTs(useTs: string, func?: typeof getOption) {
         join("structures", vars.useTs === "yes" ? "ts" : "js")
       )
     )
-    .out(vars.projectDir)
+    .out(projectDir)
     .do(
       handlebars({
         newExtname: false,
@@ -243,7 +241,7 @@ function getUseTs(useTs: string, func?: typeof getOption) {
   await new Promise((res, rej) => {
     ncp(
       resolve(__dirname, "../", join("structures", "universal")),
-      vars.projectDir,
+      projectDir,
       (err: RaggedyAny): RaggedyAny => {
         if (err) rej(err);
         res(null);
@@ -260,7 +258,7 @@ function getUseTs(useTs: string, func?: typeof getOption) {
   const packageManager = yarnVersion ? "yarn" : "npm";
   const installCommand = yarnVersion ? "yarn" : "npm install";
 
-  const install = spawn(`cd ${vars.projectDir} && ${installCommand}`, {
+  const install = spawn(`cd ${projectDir} && ${installCommand}`, {
     shell: true,
   });
 
@@ -276,7 +274,7 @@ function getUseTs(useTs: string, func?: typeof getOption) {
     console.log();
     console.log("Next steps:");
     console.log();
-    console.log(`$ cd ${vars.projectDir}`);
+    console.log(`$ cd ${projectDir}`);
     console.log(`$ ${packageManager} start`);
     console.log();
     console.log("This would start a live dev server at");

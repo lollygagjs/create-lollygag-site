@@ -42,15 +42,13 @@ function getProjectDir(dir, func) {
     let result;
     // eslint-disable-next-line no-negated-condition
     if (!dir) {
-        result = `${wPrefix} Directory name cannot be blank`;
+        result = `${wPrefix} Project directory is required`;
     }
-    else if (!dir.match(/^[\w]([\w-]*[\w])*$/) ||
-        dir.indexOf("-_") !== -1 ||
-        dir.indexOf("_-") !== -1) {
+    else if (!dir.match(/^[\w.\-\/]*$/)) {
         result = `${wPrefix} Invalid directory name... '${dir}'`;
     }
     else if ((0, fs_1.existsSync)(dir)) {
-        result = `${wPrefix} The directory '${dir}' exists`;
+        result = `${wPrefix} The directory '${dir}' already exists`;
     }
     else {
         result = dir;
@@ -176,6 +174,7 @@ function getUseTs(useTs, func) {
                     vars[opt.varToSet].trim();
             skips.push(opt.varToSet);
         }
+        const projectDir = (0, path_1.join)(vars.projectDir);
         const packageName = vars.siteName
             .toLowerCase()
             .trim()
@@ -189,7 +188,7 @@ function getUseTs(useTs, func) {
             packageName,
         })
             .in((0, path_1.resolve)(__dirname, "../", (0, path_1.join)("structures", vars.useTs === "yes" ? "ts" : "js")))
-            .out(vars.projectDir)
+            .out(projectDir)
             .do((0, handlebars_1.default)({
             newExtname: false,
             targetExtnames: [".json", ".ts", ".md", ".js"],
@@ -197,7 +196,7 @@ function getUseTs(useTs, func) {
             .build();
         (0, fs_1.unlinkSync)(".timestamp");
         yield new Promise((res, rej) => {
-            (0, ncp_1.default)((0, path_1.resolve)(__dirname, "../", (0, path_1.join)("structures", "universal")), vars.projectDir, (err) => {
+            (0, ncp_1.default)((0, path_1.resolve)(__dirname, "../", (0, path_1.join)("structures", "universal")), projectDir, (err) => {
                 if (err)
                     rej(err);
                 res(null);
@@ -210,7 +209,7 @@ function getUseTs(useTs, func) {
             .trim();
         const packageManager = yarnVersion ? "yarn" : "npm";
         const installCommand = yarnVersion ? "yarn" : "npm install";
-        const install = (0, child_process_1.spawn)(`cd ${vars.projectDir} && ${installCommand}`, {
+        const install = (0, child_process_1.spawn)(`cd ${projectDir} && ${installCommand}`, {
             shell: true,
         });
         install.stdout.on("data", (data) => {
@@ -224,7 +223,7 @@ function getUseTs(useTs, func) {
             console.log();
             console.log("Next steps:");
             console.log();
-            console.log(`$ cd ${vars.projectDir}`);
+            console.log(`$ cd ${projectDir}`);
             console.log(`$ ${packageManager} start`);
             console.log();
             console.log("This would start a live dev server at");
