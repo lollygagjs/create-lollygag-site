@@ -7,6 +7,7 @@ new Lollygag()
     .config({
         permalinks: true,
         siteName: '{{siteName}}',
+        siteDescription: '{{siteDescription}}',
     })
     .do(markdown())
     .do(templates())
