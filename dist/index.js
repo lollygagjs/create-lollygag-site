@@ -182,7 +182,7 @@ function getUseTs(useTs, func) {
             .replace(/[\s_-]+/g, "-")
             .replace(/^-+|-+$/g, "");
         yield new core_1.default()
-            .config({
+            .meta({
             siteName: vars.siteName,
             siteDescription: vars.siteDescription,
             packageName,

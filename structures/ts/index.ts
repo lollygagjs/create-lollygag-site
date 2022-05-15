@@ -6,6 +6,8 @@ import livedev from '@lollygag/livedev';
 new Lollygag()
     .config({
         permalinks: true,
+    })
+    .meta({
         siteName: '{{siteName}}',
         siteDescription: '{{siteDescription}}',
     })

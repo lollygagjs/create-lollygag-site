@@ -215,7 +215,7 @@ function getUseTs(useTs: string, func?: typeof getOption) {
     .replace(/^-+|-+$/g, "");
 
   await new Lollygag()
-    .config({
+    .meta({
       siteName: vars.siteName,
       siteDescription: vars.siteDescription,
       packageName,
