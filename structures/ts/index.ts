@@ -1,6 +1,4 @@
 import Lollygag from '@lollygag/core';
-import markdown from '@lollygag/markdown';
-import templates from '@lollygag/templates';
 import livedev from '@lollygag/livedev';
 
 new Lollygag()
@@ -11,8 +9,6 @@ new Lollygag()
         siteName: '{{siteName}}',
         siteDescription: '{{siteDescription}}',
     })
-    .do(markdown())
-    .do(templates())
     .do(
         livedev({
             patterns: {
