@@ -17,10 +17,7 @@
   },
   "devDependencies": {
     "@lollygag/core": "*",
-    "@lollygag/handlebars": "*",
     "@lollygag/livedev": "*",
-    "@lollygag/markdown": "*",
-    "@lollygag/templates": "*",
     "@types/node": "^17.0.32",
     "@typescript-eslint/eslint-plugin": "^5.23.0",
     "@typescript-eslint/parser": "^5.23.0",
