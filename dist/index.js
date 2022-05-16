@@ -189,11 +189,11 @@ function getUseTs(useTs, func) {
                 }
             }
             // eslint-disable-next-line require-atomic-updates
-            vars[opt.varToSet] =
-                val ||
+            vars[opt.varToSet]
+                = val
                     // eslint-disable-next-line no-await-in-loop
-                    (yield getOption(opt.question, null, opt.callback)) ||
-                    vars[opt.varToSet].trim();
+                    || (yield getOption(opt.question, null, opt.callback))
+                    || vars[opt.varToSet].trim();
             skips.push(opt.varToSet);
         }
         const projectDir = (0, path_1.join)(vars.projectDir);
@@ -204,7 +204,6 @@ function getUseTs(useTs, func) {
             .replace(/[\s_-]+/g, '-')
             .replace(/^-+|-+$/g, '');
         yield new core_1.default()
-            .config({ disableBuiltins: true })
             .meta({
             siteName: vars.siteName,
             siteDescription: vars.siteDescription,
@@ -258,4 +257,4 @@ function getUseTs(useTs, func) {
             process.exit(exitCode || 0);
         });
     });
-})();
+}());

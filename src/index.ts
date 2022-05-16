@@ -26,10 +26,10 @@ function getOption(
     message: string | null,
     callback: TGetOptionCallback
 ): Promise<string> {
-    if (message) console.log(message);
+    if(message) console.log(message);
 
     return new Promise((res) => {
-        rl.question(question, async (answer) => {
+        rl.question(question, async(answer) => {
             // eslint-disable-next-line callback-return
             res(callback(answer, getOption) as string | Promise<string>);
         });
@@ -43,11 +43,11 @@ function getProjectDir(dir: string, func?: typeof getOption) {
     let result;
 
     // eslint-disable-next-line no-negated-condition
-    if (!dir) {
+    if(!dir) {
         result = `${wPrefix} Project directory is required`;
-    } else if (!dir.match(/^[\w.\-\/]*$/)) {
+    } else if(!dir.match(/^[\w.\-\/]*$/)) {
         result = `${wPrefix} Invalid directory name... '${dir}'`;
-    } else if (existsSync(dir)) {
+    } else if(existsSync(dir)) {
         result = `${wPrefix} The directory '${dir}' already exists`;
     } else {
         result = dir;
@@ -81,7 +81,7 @@ function getUseTs(useTs: string, func?: typeof getOption) {
     const validValues = [...yes, ...no];
 
     // eslint-disable-next-line no-negated-condition
-    if (useTs && !validValues.includes(useTs)) {
+    if(useTs && !validValues.includes(useTs)) {
         let vals: string | string[] = [...validValues];
         const lastVal = vals.pop();
 
@@ -167,39 +167,39 @@ function getUseTs(useTs: string, func?: typeof getOption) {
     const validOptions = Object.keys(options).map((key) => key);
     const skips: TOptionVars[] = [];
 
-    for (let i = 0; i < validOptions.length; i++) {
+    for(let i = 0; i < validOptions.length; i++) {
         const opt = options[validOptions[i]];
 
         // eslint-disable-next-line no-continue
-        if (skips.includes(opt.varToSet)) continue;
+        if(skips.includes(opt.varToSet)) continue;
 
         const idx = process.argv.indexOf(validOptions[i]);
 
         let val = '';
 
-        if (idx > -1) {
-            if (opt.returnType === 'string') {
+        if(idx > -1) {
+            if(opt.returnType === 'string') {
                 val = validOptions.includes(process.argv[idx + 1])
                     ? ''
                     : process.argv[idx + 1];
             }
 
-            if (opt.returnType === 'boolstring') val = 'yes';
+            if(opt.returnType === 'boolstring') val = 'yes';
 
             const checkedVal = opt.callback(val);
 
-            if (checkedVal !== val) {
+            if(checkedVal !== val) {
                 val = '';
                 console.log(checkedVal);
             }
         }
 
         // eslint-disable-next-line require-atomic-updates
-        vars[opt.varToSet] =
-            val ||
+        vars[opt.varToSet]
+            = val
             // eslint-disable-next-line no-await-in-loop
-            (await getOption(opt.question, null, opt.callback)) ||
-            vars[opt.varToSet].trim();
+            || (await getOption(opt.question, null, opt.callback))
+            || vars[opt.varToSet].trim();
 
         skips.push(opt.varToSet);
     }
@@ -214,7 +214,6 @@ function getUseTs(useTs: string, func?: typeof getOption) {
         .replace(/^-+|-+$/g, '');
 
     await new Lollygag()
-        .config({disableBuiltins: true})
         .meta({
             siteName: vars.siteName,
             siteDescription: vars.siteDescription,
@@ -243,7 +242,7 @@ function getUseTs(useTs: string, func?: typeof getOption) {
             resolve(__dirname, '../', join('structures', 'universal')),
             projectDir,
             (err: RaggedyAny): RaggedyAny => {
-                if (err) rej(err);
+                if(err) rej(err);
                 res(null);
             }
         );
@@ -285,4 +284,4 @@ function getUseTs(useTs: string, func?: typeof getOption) {
 
         process.exit(exitCode || 0);
     });
-})();
+}());
