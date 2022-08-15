@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import {existsSync, unlinkSync} from 'fs';
+import {existsSync, readdirSync, unlinkSync} from 'fs';
 import {join, resolve} from 'path';
 import {spawn, spawnSync} from 'child_process';
 import readline from 'readline';
@@ -29,31 +29,29 @@ function getOption(
     if(message) console.log(message);
 
     return new Promise((res) => {
-        rl.question(question, async(answer) => {
-            // eslint-disable-next-line callback-return
-            res(callback(answer, getOption) as string | Promise<string>);
-        });
+        rl.question(question, async(answer) =>
+            res(callback(answer, getOption) as string | Promise<string>));
     });
 }
 
-const defaultProjectDir = '';
-const getProjectDirQuestion = `${qPrefix} Project directory: `;
+const defaultProjectDir = './';
+const getProjectDirQuestion = `${qPrefix} Project directory (${defaultProjectDir}): `;
 
 function getProjectDir(dir: string, func?: typeof getOption) {
     let result;
+    const resolvedDir = resolve(dir);
 
-    // eslint-disable-next-line no-negated-condition
-    if(!dir) {
+    if(!resolvedDir) {
         result = `${wPrefix} Project directory is required`;
-    } else if(!dir.match(/^[\w.\-\/]*$/)) {
-        result = `${wPrefix} Invalid directory name... '${dir}'`;
-    } else if(existsSync(dir)) {
-        result = `${wPrefix} The directory '${dir}' already exists`;
+    } else if(!resolvedDir.match(/^[\w.\-/]*$/)) {
+        result = `${wPrefix} Invalid directory name... '${resolvedDir}'`;
+    } else if(existsSync(resolvedDir) && readdirSync(resolvedDir).length) {
+        result = `${wPrefix} The directory '${resolvedDir}' exists and is not empty`;
     } else {
-        result = dir;
+        result = resolvedDir;
     }
 
-    return func && result !== dir
+    return func && result !== resolvedDir
         ? func(getProjectDirQuestion, result, getProjectDir)
         : result;
 }
@@ -80,7 +78,6 @@ function getUseTs(useTs: string, func?: typeof getOption) {
     const yes = ['yes', 'y', 'true'];
     const validValues = [...yes, ...no];
 
-    // eslint-disable-next-line no-negated-condition
     if(useTs && !validValues.includes(useTs)) {
         let vals: string | string[] = [...validValues];
         const lastVal = vals.pop();
@@ -233,7 +230,10 @@ function getUseTs(useTs: string, func?: typeof getOption) {
                 targetExtnames: ['.json', '.ts', '.md', '.js'],
             })
         )
-        .build();
+        .build({
+            allowExternalDirectories: true,
+            allowWorkingDirectoryOutput: true,
+        });
 
     unlinkSync('.timestamp');
 

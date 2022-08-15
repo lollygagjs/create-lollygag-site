@@ -52,30 +52,27 @@ function getOption(question, message, callback) {
     if (message)
         console.log(message);
     return new Promise((res) => {
-        rl.question(question, (answer) => __awaiter(this, void 0, void 0, function* () {
-            // eslint-disable-next-line callback-return
-            res(callback(answer, getOption));
-        }));
+        rl.question(question, (answer) => __awaiter(this, void 0, void 0, function* () { return res(callback(answer, getOption)); }));
     });
 }
-const defaultProjectDir = '';
-const getProjectDirQuestion = `${qPrefix} Project directory: `;
+const defaultProjectDir = './';
+const getProjectDirQuestion = `${qPrefix} Project directory (${defaultProjectDir}): `;
 function getProjectDir(dir, func) {
     let result;
-    // eslint-disable-next-line no-negated-condition
-    if (!dir) {
+    const resolvedDir = (0, path_1.resolve)(dir);
+    if (!resolvedDir) {
         result = `${wPrefix} Project directory is required`;
     }
-    else if (!dir.match(/^[\w.\-\/]*$/)) {
-        result = `${wPrefix} Invalid directory name... '${dir}'`;
+    else if (!resolvedDir.match(/^[\w.\-/]*$/)) {
+        result = `${wPrefix} Invalid directory name... '${resolvedDir}'`;
     }
-    else if ((0, fs_1.existsSync)(dir)) {
-        result = `${wPrefix} The directory '${dir}' already exists`;
+    else if ((0, fs_1.existsSync)(resolvedDir) && (0, fs_1.readdirSync)(resolvedDir).length) {
+        result = `${wPrefix} The directory '${resolvedDir}' exists and is not empty`;
     }
     else {
-        result = dir;
+        result = resolvedDir;
     }
-    return func && result !== dir
+    return func && result !== resolvedDir
         ? func(getProjectDirQuestion, result, getProjectDir)
         : result;
 }
@@ -93,7 +90,6 @@ function getUseTs(useTs, func) {
     const no = ['no', 'n', 'false'];
     const yes = ['yes', 'y', 'true'];
     const validValues = [...yes, ...no];
-    // eslint-disable-next-line no-negated-condition
     if (useTs && !validValues.includes(useTs)) {
         let vals = [...validValues];
         const lastVal = vals.pop();
@@ -215,7 +211,10 @@ function getUseTs(useTs, func) {
             newExtname: false,
             targetExtnames: ['.json', '.ts', '.md', '.js'],
         }))
-            .build();
+            .build({
+            allowExternalDirectories: true,
+            allowWorkingDirectoryOutput: true,
+        });
         (0, fs_1.unlinkSync)('.timestamp');
         yield new Promise((res, rej) => {
             (0, ncp_1.default)((0, path_1.resolve)(__dirname, '../', (0, path_1.join)('structures', 'universal')), projectDir, (err) => {
