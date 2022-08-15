@@ -4,19 +4,6 @@ const {default: livedev} = require('@lollygag/livedev');
 const isProduction = process.env.NODE_ENV === 'production';
 const lollygag = new Lollygag();
 
-if(!isProduction) {
-    lollygag.do(
-        livedev({
-            patterns: {
-                'files/**/*': true,
-                'files/**/*.scss': '**/*.scss',
-                'templates/**/*': '**/*.md',
-            },
-            injectLivereloadScript: true,
-        })
-    );
-}
-
 lollygag
     .config({
         prettyUrls: true,
@@ -35,6 +22,18 @@ lollygag
             },
             injectLivereloadScript: true,
         })
-    );
+    )
+    .build({fullBuild: true});
 
-lollygag.build({fullBuild: true});
+if(!isProduction) {
+    lollygag.do(
+        livedev({
+            patterns: {
+                'files/**/*': true,
+                'files/**/*.scss': '**/*.scss',
+                'templates/**/*': '**/*.md',
+            },
+            injectLivereloadScript: true,
+        })
+    );
+}
