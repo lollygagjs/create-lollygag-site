@@ -4,6 +4,19 @@ import livedev from '@lollygag/livedev';
 const isProduction = process.env.NODE_ENV === 'production';
 const lollygag = new Lollygag();
 
+if(!isProduction) {
+    lollygag.do(
+        livedev({
+            patterns: {
+                'files/**/*': true,
+                'files/**/*.scss': '**/*.scss',
+                'templates/**/*': '**/*.md',
+            },
+            injectLivereloadScript: true,
+        })
+    );
+}
+
 lollygag
     .config({
         prettyUrls: true,
@@ -23,18 +36,5 @@ lollygag
             injectLivereloadScript: true,
         })
     );
-
-if(!isProduction) {
-    lollygag.do(
-        livedev({
-            patterns: {
-                'files/**/*': true,
-                'files/**/*.scss': '**/*.scss',
-                'templates/**/*': '**/*.md',
-            },
-            injectLivereloadScript: true,
-        })
-    );
-}
 
 lollygag.build({fullBuild: true});
