@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import {existsSync, readdirSync, unlinkSync} from 'fs';
+import {existsSync, readdirSync} from 'fs';
 import {join, resolve} from 'path';
 import {spawn, spawnSync} from 'child_process';
 import readline from 'readline';
@@ -211,6 +211,7 @@ function getUseTs(useTs: string, func?: typeof getOption) {
         .replace(/^-+|-+$/g, '');
 
     await new Lollygag()
+        .config({generateTimestamp: false})
         .meta({
             siteName: vars.siteName,
             siteDescription: vars.siteDescription,
@@ -234,8 +235,6 @@ function getUseTs(useTs: string, func?: typeof getOption) {
             allowExternalDirectories: true,
             allowWorkingDirectoryOutput: true,
         });
-
-    unlinkSync('.timestamp');
 
     await new Promise((res, rej) => {
         ncp(

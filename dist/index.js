@@ -200,6 +200,7 @@ function getUseTs(useTs, func) {
             .replace(/[\s_-]+/g, '-')
             .replace(/^-+|-+$/g, '');
         yield new core_1.default()
+            .config({ generateTimestamp: false })
             .meta({
             siteName: vars.siteName,
             siteDescription: vars.siteDescription,
@@ -215,7 +216,6 @@ function getUseTs(useTs, func) {
             allowExternalDirectories: true,
             allowWorkingDirectoryOutput: true,
         });
-        (0, fs_1.unlinkSync)('.timestamp');
         yield new Promise((res, rej) => {
             (0, ncp_1.default)((0, path_1.resolve)(__dirname, '../', (0, path_1.join)('structures', 'universal')), projectDir, (err) => {
                 if (err)
