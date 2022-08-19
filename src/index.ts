@@ -211,7 +211,10 @@ function getUseTs(useTs: string, func?: typeof getOption) {
         .replace(/^-+|-+$/g, '');
 
     await new Lollygag()
-        .config({generateTimestamp: false})
+        .config({
+            prettyUrls: false,
+            generateTimestamp: false,
+        })
         .meta({
             siteName: vars.siteName,
             siteDescription: vars.siteDescription,
