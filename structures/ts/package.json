@@ -9,7 +9,6 @@
     "build:production": "NODE_ENV=production yarn build",
     "start": "nodemon",
     "serve": "serve public",
-    "tsc": "tsc -d",
     "eslint:panadero": "npx install-peerdeps --dev eslint-config-panadero",
     "prettier": "prettier --write .",
     "eslint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
