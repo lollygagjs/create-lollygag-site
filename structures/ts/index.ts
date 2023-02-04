@@ -1,4 +1,6 @@
-import Lollygag, {markdown, templates} from '@lollygag/core';
+import Lollygag from '@lollygag/core';
+import markdown from '@lollygag/markdown';
+import templates from '@lollygag/templates';
 import livedev from '@lollygag/livedev';
 
 const isProduction = process.env.NODE_ENV === 'production';
