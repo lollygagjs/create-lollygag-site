@@ -1,4 +1,6 @@
-const {default: Lollygag, markdown, templates} = require('@lollygag/core');
+const {default: Lollygag} = require('@lollygag/core');
+const {default: markdown} = require('@lollygag/markdown');
+const {default: templates} = require('@lollygag/templates');
 const {default: livedev} = require('@lollygag/livedev');
 
 const isProduction = process.env.NODE_ENV === 'production';
