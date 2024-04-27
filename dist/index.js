@@ -41,7 +41,7 @@ const path_1 = require("path");
 const child_process_1 = require("child_process");
 const readline_1 = __importDefault(require("readline"));
 const ncp_1 = __importDefault(require("ncp"));
-const core_1 = __importStar(require("@lollygag/core"));
+const lollygag_1 = __importStar(require("@lollygag/lollygag"));
 const rl = readline_1.default.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -199,7 +199,25 @@ function getUseTs(useTs, func) {
             .replace(/[^\w\s-]/g, '')
             .replace(/[\s_-]+/g, '-')
             .replace(/^-+|-+$/g, '');
-        yield new core_1.default()
+        const pnpmVersion = (0, child_process_1.spawnSync)('pnpm --version', {
+            shell: true,
+        })
+            .stdout.toString()
+            .trim();
+        const yarnVersion = (0, child_process_1.spawnSync)('yarn --version', {
+            shell: true,
+        })
+            .stdout.toString()
+            .trim();
+        // eslint-disable-next-line no-nested-ternary
+        const packageManager = pnpmVersion ? 'pnpm' : yarnVersion ? 'yarn' : 'npm';
+        // eslint-disable-next-line no-nested-ternary
+        const installCommand = pnpmVersion
+            ? 'pnpm install'
+            : yarnVersion
+                ? 'yarn'
+                : 'npm install';
+        yield new lollygag_1.default()
             .config({
             prettyUrls: false,
             generateTimestamp: false,
@@ -208,10 +226,11 @@ function getUseTs(useTs, func) {
             siteName: vars.siteName,
             siteDescription: vars.siteDescription,
             packageName,
+            packageManager,
         })
             .in((0, path_1.resolve)(__dirname, '../', (0, path_1.join)('structures', vars.useTs === 'yes' ? 'ts' : 'js')))
             .out(projectDir)
-            .do((0, core_1.handlebars)({
+            .do((0, lollygag_1.handlebars)({
             newExtname: false,
             targetExtnames: ['.json', '.ts', '.md', '.js'],
         }))
@@ -226,18 +245,21 @@ function getUseTs(useTs, func) {
                 res(null);
             });
         });
-        const yarnVersion = (0, child_process_1.spawnSync)('yarn --version', {
-            shell: true,
-        })
-            .stdout.toString()
-            .trim();
-        const packageManager = yarnVersion ? 'yarn' : 'npm';
-        const installCommand = yarnVersion ? 'yarn' : 'npm install';
         const install = (0, child_process_1.spawn)(`cd ${projectDir} && ${installCommand}`, {
             shell: true,
             stdio: 'inherit',
         });
         install.on('exit', (exitCode) => {
+            if (exitCode && exitCode !== 0) {
+                console.log();
+                console.log('--------------------------------------------');
+                console.log();
+                console.log('An error occurred while installing dependencies.');
+                console.log();
+                console.log('--------------------------------------------');
+                console.log();
+                process.exit(exitCode);
+            }
             console.log();
             console.log('--------------------------------------------');
             console.log();
@@ -256,7 +278,7 @@ function getUseTs(useTs, func) {
             console.log();
             console.log('--------------------------------------------');
             console.log();
-            process.exit(exitCode || 0);
+            process.exit(0);
         });
     });
 }());

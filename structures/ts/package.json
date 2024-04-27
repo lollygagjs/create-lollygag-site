@@ -6,17 +6,15 @@
   "license": "MIT",
   "scripts": {
     "build": "NODE_OPTIONS=--trace-warnings ts-node --transpile-only index.ts",
-    "build:production": "NODE_ENV=production yarn build",
+    "build:production": "NODE_ENV=production {{packageManager}} run build",
     "start": "nodemon",
     "serve": "serve public",
     "eslint:panadero": "npx install-peerdeps --dev eslint-config-panadero",
     "prettier": "prettier --write .",
     "eslint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
-    "format": "yarn prettier && yarn eslint"
+    "format": "{{packageManager}} run prettier && {{packageManager}} run eslint"
   },
   "devDependencies": {
-    "@lollygag/core": "*",
-    "@lollygag/livedev": "*",
     "@types/node": "^17.0.32",
     "@typescript-eslint/eslint-plugin": "^5.23.0",
     "@typescript-eslint/parser": "^5.23.0",

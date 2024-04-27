@@ -1,7 +1,8 @@
-import Lollygag from '@lollygag/core';
-import markdown from '@lollygag/markdown';
-import templates from '@lollygag/templates';
-import livedev from '@lollygag/livedev';
+import Lollygag, {
+    markdownWorker,
+    templatesWorker,
+    livedevWorker,
+} from '@lollygag/lollygag';
 
 const isProduction = process.env.NODE_ENV === 'production';
 const lollygag = new Lollygag();
@@ -14,28 +15,16 @@ lollygag
         siteName: '{{siteName}}',
         siteDescription: '{{siteDescription}}',
     })
-    .do(markdown())
-    .do(templates())
+    .do(markdownWorker.default())
+    .do(templatesWorker.default())
     .do(
-        livedev({
-            patterns: {
-                'files/**/*': true,
-                'templates/**/*': '**/*.md',
-            },
-            injectLivereloadScript: true,
-        })
-    )
-    .build({fullBuild: true});
-
-if(!isProduction) {
-    lollygag.do(
-        livedev({
+        livedevWorker.default({
             patterns: {
                 'files/**/*': true,
                 'files/**/*.scss': '**/*.scss',
                 'templates/**/*': '**/*.md',
             },
-            injectLivereloadScript: true,
+            injectLivereloadScript: !isProduction,
         })
-    );
-}
+    )
+    .build({fullBuild: true});

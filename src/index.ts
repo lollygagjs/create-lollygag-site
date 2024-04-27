@@ -5,7 +5,7 @@ import {join, resolve} from 'path';
 import {spawn, spawnSync} from 'child_process';
 import readline from 'readline';
 import ncp from 'ncp';
-import Lollygag, {handlebars, RaggedyAny} from '@lollygag/core';
+import Lollygag, {handlebars, RaggedyAny} from '@lollygag/lollygag';
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -210,6 +210,28 @@ function getUseTs(useTs: string, func?: typeof getOption) {
         .replace(/[\s_-]+/g, '-')
         .replace(/^-+|-+$/g, '');
 
+    const pnpmVersion = spawnSync('pnpm --version', {
+        shell: true,
+    })
+        .stdout.toString()
+        .trim();
+
+    const yarnVersion = spawnSync('yarn --version', {
+        shell: true,
+    })
+        .stdout.toString()
+        .trim();
+
+    // eslint-disable-next-line no-nested-ternary
+    const packageManager = pnpmVersion ? 'pnpm' : yarnVersion ? 'yarn' : 'npm';
+
+    // eslint-disable-next-line no-nested-ternary
+    const installCommand = pnpmVersion
+        ? 'pnpm install'
+        : yarnVersion
+            ? 'yarn'
+            : 'npm install';
+
     await new Lollygag()
         .config({
             prettyUrls: false,
@@ -219,6 +241,7 @@ function getUseTs(useTs: string, func?: typeof getOption) {
             siteName: vars.siteName,
             siteDescription: vars.siteDescription,
             packageName,
+            packageManager,
         })
         .in(
             resolve(
@@ -250,21 +273,24 @@ function getUseTs(useTs: string, func?: typeof getOption) {
         );
     });
 
-    const yarnVersion = spawnSync('yarn --version', {
-        shell: true,
-    })
-        .stdout.toString()
-        .trim();
-
-    const packageManager = yarnVersion ? 'yarn' : 'npm';
-    const installCommand = yarnVersion ? 'yarn' : 'npm install';
-
     const install = spawn(`cd ${projectDir} && ${installCommand}`, {
         shell: true,
         stdio: 'inherit',
     });
 
     install.on('exit', (exitCode) => {
+        if(exitCode && exitCode !== 0) {
+            console.log();
+            console.log('--------------------------------------------');
+            console.log();
+            console.log('An error occurred while installing dependencies.');
+            console.log();
+            console.log('--------------------------------------------');
+            console.log();
+
+            process.exit(exitCode);
+        }
+
         console.log();
         console.log('--------------------------------------------');
         console.log();
@@ -284,6 +310,6 @@ function getUseTs(useTs: string, func?: typeof getOption) {
         console.log('--------------------------------------------');
         console.log();
 
-        process.exit(exitCode || 0);
+        process.exit(0);
     });
 }());
